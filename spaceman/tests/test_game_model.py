@@ -155,7 +155,6 @@ class GameModelTests( TestCase ):
         expectedLettersGuessed = initialLettersGuessed + [guess]
         self.assertEquals( game.letters_guessed, expectedLettersGuessed )
 
-
     def test_is_game_over_is_false_if_guesses_left( self ):
        initialLettersGuessed = ['S', 'A', 'W', 'O', 'R','C']
        game = Game(word= 'TESTWORD', guessed_word_state= ['','','S','','W','O','R',''],letters_guessed = initialLettersGuessed.copy(),guesses_allowed= 5,guesses_taken= 2)
@@ -163,7 +162,7 @@ class GameModelTests( TestCase ):
        guess = "Z"
        #test letter that is not in the word
        game.handleGuess(guess)
-       #based on what is given, 3 guesses taken and 2 remain
+       #3 guesses taken and 2 remain
        self.assertFalse(game.is_game_over)
        
        
@@ -180,10 +179,11 @@ class GameModelTests( TestCase ):
         initialLettersGuessed = ['S', 'A', 'W', 'O', 'R','C']
         game = Game(word= 'TESTWORD',guessed_word_state= ['','','S','','W','O','R',''],letters_guessed = initialLettersGuessed.copy(),guesses_allowed= 5,guesses_taken= 2)
        
-       #test by giving 3 false guesses until there are none left
+       #give game 3 false guesses until there are no guesses left
        guesses = ["X","Y","Z"]
        for guess in guesses:
            game.handleGuess(guess)
+       
        self.assertTrue(game.is_game_over)
        
     def test_is_game_over_is_true_if_all_letters_guessed( self ):
@@ -191,7 +191,8 @@ class GameModelTests( TestCase ):
        game = Game(word= 'TESTWORD',guessed_word_state= ['','','S','','W','O','R',''],letters_guessed = initialLettersGuessed.copy(),guesses_allowed= 5,guesses_taken= 2)
        
        #give game 3 correct guesses to complete word
-       guesses = ["T","E","D"]
+       guesses = ["D","E","T"]
        for guess in guesses:
            game.handleGuess(guess)
+       
        self.assertTrue(game.is_game_over)
