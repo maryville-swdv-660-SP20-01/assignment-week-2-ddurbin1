@@ -56,20 +56,29 @@ class GameApiViewTests( TestCase ):
             self.assertEquals( response.data['letters_guessed'], ['A','B'])
 
     def test_game_view_should_reject_PUT_if_invalid( self ):
-        with patch.object( Game.objects, 'get' ) as mock_get:
+        
+        with patch.object( Game.objects,'get') as mock_get:
             self.mock_game.letters_available = ['B','C']
             mock_get.return_value = self.mock_game
-
             mock_request = self.request_factory.put( 'dummy', json.dumps({'letters_guessed': ['A']}), content_type='application/json')
-
             response = game_view( mock_request, 25 )
-            
             mock_get.assert_called_with( pk=25 )
             self.assertEquals( response.status_code, 400 )
 
-
-    ### GET solution view
-    # TODO: Add tests for Getting a game's solution
-    # HINT: remember the `setUp` fixture that is in this test class, 
-    #   it constructs things that might be useful
+    def test_game_404_status_when_game_not_found( self ):
+       
+       with patch.object(Game.objects,'get') as mock_get:
+           mock_get.side_effect = Game.DoesNotExist
+           response = game_solution(self.mock_get_request,25)
+           mock_get.assert_called_with(pk=25)
+           self.assertEquals( response.status_code,404)
+   
+   def test_game_solution_respond_with_solution_word_in_json(self):
+       
+       with patch.object (Game.objects,'get') as mock_get:
+           mock_get.return_value = self.mock_game
+           response = game_solution(self.mock_get_request,25)
+           mock_get.assert_called_with(pk=25)
+           self.assertEqual(response.status_code,200)
+           self.assertEqual(response.data, {'solution':self.mock_game.word})
 
